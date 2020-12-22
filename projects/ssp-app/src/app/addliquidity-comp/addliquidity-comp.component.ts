@@ -87,14 +87,21 @@ export class AddliquidityCompComponent implements OnInit {
         this.loadStatus = LoadStatus.Loading;
         this.loading.emit();
         let amtsStr = new Array<string>();
+        let totalAmt = new BigNumber(0);
         this.amts.forEach((e, i) => {
             if (e > 0 && !this.isApproveEnabled(i)) {
                 amtsStr.push(String(e));
             } else { // 
                 amtsStr.push('0');
             }
+            totalAmt = totalAmt.plus(e);
         });
-        let lp = await this.boot.calcTokenAmount(amtsStr, true);
+        let lp;
+        if (this.boot.poolInfo.totalSupply.comparedTo(0) === 0) {
+            lp = totalAmt;
+        } else {
+            lp = await this.boot.calcTokenAmount(amtsStr, true);
+        }
         let nVirtualPrice = await this.boot.calculateVirtualPrice(amtsStr, lp, true);
         console.log("New Virtual Price: " + nVirtualPrice.toFixed(18));
         let diff = nVirtualPrice.div(this.boot.poolInfo.virtualPrice).minus(1).abs();
@@ -110,12 +117,12 @@ export class AddliquidityCompComponent implements OnInit {
         //     this.loaded.emit();
         //     return;
         // } else {
-            this.boot.addLiquidity(amtsStr, lp).then(r => {
-                this.updateApproveStatus();
-                this.loadStatus = LoadStatus.Loaded;
-                this.boot.loadData();
-                this.loaded.emit();
-            });
+        this.boot.addLiquidity(amtsStr, lp).then(r => {
+            this.updateApproveStatus();
+            this.loadStatus = LoadStatus.Loaded;
+            this.boot.loadData();
+            this.loaded.emit();
+        });
         // }
     }
 
