@@ -2,6 +2,7 @@ export const environment = {
     production: true,
     poolId: "p1",
     liquiditySymbol: "BSLP-01",
+    tokenSymbol: "BST",
     virtualPriceDiff: 0.006,
     coins: [{ symbol: 'DAI' }, { symbol: 'BUSD' }, { symbol: 'USDT' }],
     chains: {
@@ -29,7 +30,7 @@ export const environment = {
             rpc: 'http://localhost:8545/',
             contracts: {
                 proxy: {
-                    address: "0x938EcfA936028B3dc6aEd0b08CfACbb5931C921C"
+                    address: "0xE236Fa1b178C61449CA2A152A62C838cFd2ddA04"
                 },
                 pid: 0
             }

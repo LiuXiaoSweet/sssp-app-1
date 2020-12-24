@@ -29,6 +29,7 @@ export class BootService {
     poolId = environment.poolId;
     coins = environment.coins;
     liquiditySymbol = environment.liquiditySymbol;
+    tokenSymbol = environment.tokenSymbol;
     web3: any;
     binanceWeb3: any;
     metamaskWeb3: any;
@@ -51,6 +52,8 @@ export class BootService {
     poolAddress: string;
 
     proxyContract: Contract;
+
+    tokenContract: Contract;
 
     contracts: Array<Contract> = new Array();
     contractsAddress: Array<string> = new Array();
@@ -98,21 +101,71 @@ export class BootService {
 
 
     private initContracts(): Promise<any> {
+        let denominator = new BigNumber(10).exponentiatedBy(18);
         this.proxyContract = new this.web3.eth.Contract(abi.proxyABI, this.chainConfig.contracts.proxy.address);
-        return this.getPoolInfo(this.chainConfig.contracts.pid).then(res => {
-            if (res && res._coins) {
-                res._coins.forEach(e => {
-                    this.contracts.push(new this.web3.eth.Contract(abi.coinABI, e));
-                    this.contractsAddress.push(e);
+        this.proxyContract.methods.getTotalAllocPoint().call().then(points => {
+            if (points) {
+                this.poolInfo.totalAllocPoint = new BigNumber(points).div(denominator);
+            }
+        }).catch(e => {
+            console.log(e);
+        });
+        return this.proxyContract.methods.getTokenAddress().call().then(tokenAddress => {
+            if (tokenAddress) {
+                this.tokenContract = new this.web3.eth.Contract(abi.tokenABI, tokenAddress);
+                this.tokenContract.methods.balanceOf(this.accounts[0]).call().then(balance => {
+                    if (balance) {
+                        this.balance.tokenBalance = new BigNumber(balance).div(denominator);
+                    }
+                });
+                this.tokenContract.methods.balanceOf(this.chainConfig.contracts.proxy.address).call().then(balance => {
+                    if (balance) {
+                        this.poolInfo.tokenBalance = new BigNumber(balance).div(denominator);
+                    }
+                });
+                this.tokenContract.methods.totalSupply().call().then(totalSupply => {
+                    if (totalSupply) {
+                        this.poolInfo.tokenTotalSupply = new BigNumber(totalSupply).div(denominator);
+                    }
+                });
+                this.tokenContract.methods.availableSupply().call().then(supply => {
+                    if (supply) {
+                        this.poolInfo.tokenAvailableSupply = new BigNumber(supply).div(denominator);
+                    }
                 });
             }
-            if (res && res._poolAddress) {
-                this.poolAddress = res._poolAddress;
-                this.poolContract = new this.web3.eth.Contract(abi.poolABI, res._poolAddress);
-            }
-            return true;
+            return this.getPoolInfo(this.chainConfig.contracts.pid).then(res => {
+                if (res && res._coins) {
+                    res._coins.forEach(e => {
+                        this.contracts.push(new this.web3.eth.Contract(abi.coinABI, e));
+                        this.contractsAddress.push(e);
+                    });
+                }
+                if (res && res._poolAddress) {
+                    this.poolAddress = res._poolAddress;
+                    this.poolContract = new this.web3.eth.Contract(abi.poolABI, res._poolAddress);
+                }
+                if (res && res._allocPoint) {
+                    this.poolInfo.allocPoint = new BigNumber(res._allocPoint).div(denominator);
+                }
+                if (res && res._accTokenPerShare) {
+                    this.poolInfo.accTokenPerShare = new BigNumber(res._accTokenPerShare).div(denominator);
+                }
+                if (res && res._shareRewardRate) {
+                    this.poolInfo.shareRewardRate = new BigNumber(res._shareRewardRate).div(denominator);
+                }
+                if (res && res._swapRewardRate) {
+                    this.poolInfo.swapRewardRate = new BigNumber(res._swapRewardRate).div(denominator);
+                }
+                if (res && res._totalVolAccPoints) {
+                    this.poolInfo.totalVolAccPoints = new BigNumber(res._totalVolAccPoints).div(denominator);
+                }
+                if (res && res._totalVolReward) {
+                    this.poolInfo.totalVolReward = new BigNumber(res._totalVolReward).div(denominator);
+                }
+                return true;
+            });
         });
-        // @ts-ignore
     }
 
     public async getPoolInfo(pid: number): Promise<any> {
@@ -165,7 +218,6 @@ export class BootService {
                     if (networkInfo.isSupported) {
                         this.chainConfig = environment.chains[chainId];
                         this.chainId = chainId;
-                        await this.initContracts();
                         await this.loadData();
                     } else {
                         if (!this.web3.currentProvider.isMetaMask) {
@@ -215,7 +267,6 @@ export class BootService {
                 this.chainId = networkInfo.chainId;
                 this.accounts = await this.web3.eth.getAccounts();
                 this.walletReady.next();
-                await this.initContracts();
                 await this.loadData();
             } else {
                 this.dialog.open(UnsupportedNetworkComponent, { data: { chainId: networkInfo.chainId }, height: '20em', width: '32em' });
@@ -311,30 +362,49 @@ export class BootService {
 
     public async loadData() {
         if (this.web3) {
-            this.contracts.forEach(async (e, index) => {
-                let balanceStr = await e.methods.balanceOf(this.accounts[0]).call({ from: this.accounts[0] });
-                let decimals = await e.methods.decimals().call({ from: this.accounts[0] });
-                let adminBalanceStr = await this.poolContract.methods.admin_balances(index).call({ from: this.accounts[0] });
-
-                this.balance.coinsBalance[index] = new BigNumber(balanceStr).div(new BigNumber(10).exponentiatedBy(decimals));
-                let pBalanceStr = await e.methods.balanceOf(this.poolAddress).call({ from: this.accounts[0] });
-                this.poolInfo.coinsBalance[index] = new BigNumber(pBalanceStr).div(new BigNumber(10).exponentiatedBy(decimals));
-                this.poolInfo.coinsRealBalance[index] = this.poolInfo.coinsBalance[index].minus(new BigNumber(adminBalanceStr).div(new BigNumber(10).exponentiatedBy(decimals)));
+            this.initContracts().then(async () => {
+                let denominator = new BigNumber(10).exponentiatedBy(18);
+                let lpBalanceStr = await this.poolContract.methods.balanceOf(this.accounts[0]).call({ from: this.accounts[0] });
+                let lpDecimals = await this.poolContract.methods.decimals().call({ from: this.accounts[0] });
+                this.balance.lp = new BigNumber(lpBalanceStr).div(new BigNumber(10).exponentiatedBy(lpDecimals));
+                // let feeStr=await this.poolContract.methods.fee().call({from:this.accounts[0]});
+                // let adminFeeStr=await this.poolContract.methods.fee().call({from:this.accounts[0]});
+                let totalSupplyStr = await this.poolContract.methods.totalSupply().call({ from: this.accounts[0] });
+                this.poolInfo.totalSupply = new BigNumber(totalSupplyStr).div(new BigNumber(10).exponentiatedBy(lpDecimals));
+                // this.poolInfo.fee = new BigNumber(feeStr).div(new BigNumber(10).exponentiatedBy(10));
+                // this.poolInfo.adminFee=new BigNumber(adminFeeStr).div(new BigNumber(10).exponentiatedBy(10));
+                if (this.poolInfo.totalSupply.comparedTo(0) > 0) {
+                    let virtualPrice = await this.getVirtualPrice();
+                    this.poolInfo.virtualPrice = virtualPrice;
+                }
+                let res = await this.proxyContract.methods.getUserInfo(this.chainConfig.contracts.pid, this.accounts[0]).call({ from: this.accounts[0] });
+                if (res && res._amount) {
+                    this.balance.stakingLP = new BigNumber(res._amount).div(denominator);
+                }
+                if (res && res._volume) {
+                    this.balance.volume = new BigNumber(res._volume).div(denominator);
+                }
+                if (res && res._rewardDebt) {
+                    this.balance.rewardDebt = new BigNumber(res._rewardDebt).div(denominator);
+                }
+                let pending = await this.proxyContract.methods.pendingReward(this.chainConfig.contracts.pid, this.accounts[0]).call({ from: this.accounts[0] });
+                if (pending) {
+                    this.balance.pendingToken = new BigNumber(pending).div(denominator);
+                }
+                this.contracts.forEach(async (e, index) => {
+                    let balanceStr = await e.methods.balanceOf(this.accounts[0]).call({ from: this.accounts[0] });
+                    let decimals = await e.methods.decimals().call({ from: this.accounts[0] });
+                    this.balance.coinsBalance[index] = new BigNumber(balanceStr).div(new BigNumber(10).exponentiatedBy(decimals));
+                    let pBalanceStr = await e.methods.balanceOf(this.poolAddress).call({ from: this.accounts[0] });
+                    this.poolInfo.coinsBalance[index] = new BigNumber(pBalanceStr).div(new BigNumber(10).exponentiatedBy(decimals));
+                    if (this.poolInfo.totalSupply.comparedTo(0) > 0) {
+                        let adminBalanceStr = await this.poolContract.methods.admin_balances(index).call({ from: this.accounts[0] });
+                        this.poolInfo.coinsRealBalance[index] = this.poolInfo.coinsBalance[index].minus(new BigNumber(adminBalanceStr).div(new BigNumber(10).exponentiatedBy(decimals)));
+                    }
+                });
+            }).catch(e => {
+                console.log(e);
             });
-            let lpBalanceStr = await this.poolContract.methods.balanceOf(this.accounts[0]).call({ from: this.accounts[0] });
-            let lpDecimals = await this.poolContract.methods.decimals().call({ from: this.accounts[0] });
-            this.balance.lp = new BigNumber(lpBalanceStr).div(new BigNumber(10).exponentiatedBy(lpDecimals));
-            // let feeStr=await this.poolContract.methods.fee().call({from:this.accounts[0]});
-            // let adminFeeStr=await this.poolContract.methods.fee().call({from:this.accounts[0]});
-
-            let totalSupplyStr = await this.poolContract.methods.totalSupply().call({ from: this.accounts[0] });
-            this.poolInfo.totalSupply = new BigNumber(totalSupplyStr).div(new BigNumber(10).exponentiatedBy(lpDecimals));
-            // this.poolInfo.fee = new BigNumber(feeStr).div(new BigNumber(10).exponentiatedBy(10));
-            // this.poolInfo.adminFee=new BigNumber(adminFeeStr).div(new BigNumber(10).exponentiatedBy(10));
-            if (this.poolInfo.totalSupply.comparedTo(0) > 0) {
-                let virtualPrice = await this.getVirtualPrice();
-                this.poolInfo.virtualPrice = virtualPrice;
-            }
         }
     }
 

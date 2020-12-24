@@ -1,0 +1,44 @@
+<div class="assetDiv">
+    <div class="main">
+        <div class="tittle">
+            <div></div>
+            <p>Pool's Reward Info</p>
+        </div>
+        <div class="sum">
+            <div>Allocation Percent:</div>
+            <div>{{allocationPercent().toFixed(2,1)}}%</div>
+        </div>
+        <div class="sum">
+            <div>{{boot.tokenSymbol}} per Share:</div>
+            <div>{{boot.poolInfo.accTokenPerShare.toFormat(4,1)}}</div>
+        </div>
+        <div class="sum">
+            <div>LP farming Percent:</div>
+            <div>{{farmingRewardPercent().toFixed(2,1)}}%</div>
+        </div>
+        <div class="sum">
+            <div>Volume Percent:</div>
+            <div>{{volRewardPercent().toFixed(2,1)}}%</div>
+        </div>
+        <div class="sum">
+            <div>Total Volume:</div>
+            <div>{{boot.poolInfo.totalVolAccPoints.toFormat(4,1)}}</div>
+        </div>
+        <div class="sum">
+            <div>Total Volume Reward:</div>
+            <div>{{boot.poolInfo.totalVolReward.toFormat(4,1)}}</div>
+        </div>
+        <div class="sum">
+            <div>{{boot.tokenSymbol}} Total Supply:</div>
+            <div>{{boot.poolInfo.tokenTotalSupply.toFormat(4,1)}}</div>
+        </div>
+        <div class="sum">
+            <div>{{boot.tokenSymbol}} Available Supply:</div>
+            <div>{{boot.poolInfo.tokenAvailableSupply.toFormat(4,1)}}</div>
+        </div>
+        <div class="sum">
+            <div>{{boot.tokenSymbol}} Balance:</div>
+            <div>{{boot.poolInfo.tokenBalance.toFormat(4,1)}}</div>
+        </div>
+    </div>
+</div>

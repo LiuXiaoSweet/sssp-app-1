@@ -27,6 +27,8 @@ import { ApproveDlgComponent } from './approve-dlg/approve-dlg.component';
 import { AddlpSlippageConfirmComponent } from './addlp-slippage-confirm/addlp-slippage-confirm.component';
 import { WalletExceptionDlgComponent } from './wallet-exception-dlg/wallet-exception-dlg.component';
 import { MatIconModule } from '@angular/material/icon';
+import { UserInfoComponent } from './user-info/user-info.component';
+import { RewardInfoComponent } from './reward-info/reward-info.component';
 
 @NgModule({
     declarations: [
@@ -44,7 +46,9 @@ import { MatIconModule } from '@angular/material/icon';
         PriceDiffComponent,
         ApproveDlgComponent,
         AddlpSlippageConfirmComponent,
-        WalletExceptionDlgComponent
+        WalletExceptionDlgComponent,
+        UserInfoComponent,
+        RewardInfoComponent
     ],
     imports: [
         BrowserModule,
