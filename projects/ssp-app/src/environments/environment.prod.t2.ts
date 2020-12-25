@@ -1,10 +1,10 @@
 export const environment = {
     production: true,
-    poolId: "p1",
-    liquiditySymbol: "BSLP-01",
+    poolId: "p2",
+    liquiditySymbol: "BSLP-02",
     tokenSymbol: "BST",
     virtualPriceDiff: 0.006,
-    coins: [{ symbol: 'bstDAI' }, { symbol: 'bstBUSD' }, { symbol: 'bstUSDT' }],
+    coins: [{ symbol: 'BTCB' }, { symbol: 'renBTC' }, { symbol: 'anyBTC' }],
     chains: {
         56: {
             enabled: false,
@@ -21,7 +21,7 @@ export const environment = {
                 proxy: {
                     address: "0xc69B1F6323ccB7146cb61A02321675fA374bEB79"
                 },
-                pid: 0
+                pid: 1
             }
         },
         1337: {
@@ -32,7 +32,7 @@ export const environment = {
                 proxy: {
                     address: "0x4F25a6F127adCBFf0C29CBB029Eff908Db2dD56c"
                 },
-                pid: 0
+                pid: 1
             }
         },
         "Binance-Chain-Ganges": {
@@ -43,7 +43,7 @@ export const environment = {
                 proxy: {
                     address: "0xc69B1F6323ccB7146cb61A02321675fA374bEB79"
                 },
-                pid: 0
+                pid: 1
             }
         }
     },

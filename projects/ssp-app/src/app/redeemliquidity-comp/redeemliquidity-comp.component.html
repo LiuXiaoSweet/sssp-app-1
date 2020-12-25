@@ -2,12 +2,12 @@
 <div class="withdrawLiqui-pc">
     <div class="main">
         <div class="LiquidityRatio">
-            <p>{{boot.liquiditySymbol}} {{boot.balance.lp.toFixed(9,1)}}</p>
+            <p>{{boot.liquiditySymbol}} {{boot.balance.lp.toFixed(4,1)}}</p>
             <div class="enterDiv">
                 <div class="inputDiv">
-                    <input type="number" name="redeemPrecent" [ngModel]="redeemPrecent"
-                        (ngModelChange)="redeemPrecentChange($event)"
-                        placeholder="{{'Please enter a number'|translate}}" >
+                    <input type="number" name="redeemPercent" [ngModel]="redeemPercent"
+                        (ngModelChange)="redeemPercentChange($event)"
+                        placeholder="{{'Please enter a number'|translate}}">
                     <span>%</span>
                 </div>
             </div>
@@ -23,29 +23,90 @@
                         <div>
                             <input type="radio" name="redeemToIndex" [ngModel]="redeemToIndex"
                                 (ngModelChange)="redeemToIndexChange($event)" value="{{i}}"
-                                [disabled]="!redeemPrecent||redeemPrecent===null||redeemPrecent===0">
+                                [disabled]="!redeemPercent||redeemPercent===null||redeemPercent===0">
                             <label for="daiEabled">{{"Redeem All to"|translate}} {{coin.symbol}}</label>
                         </div>
                     </div>
                     <div class="second">
-                        <!-- [disabled]="redeemPrecent&&redeemPrecent!==null&&redeemPrecent!==0" -->
+                        <!-- [disabled]="redeemPercent&&redeemPercent!==null&&redeemPercent!==0" -->
                         <input type="text" name="{{coin.symbol}}Amt" [(ngModel)]="amts[i]"
-                            placeholder="{{'Enter an amount'|translate}}" >
+                            placeholder="{{'Enter an amount'|translate}}">
                     </div>
                 </div>
             </div>
         </div>
-
-    </div>
-    <div class="averageDiv">
-        <div class="leftDiv">
-            <mat-slide-toggle [color]="slideToggleColor" [checked]="false" [disabled]="!redeemPrecent||redeemPrecent===null||redeemPrecent===0" (change)="reset($event)" #redeemToThree>{{"Redeem to all coins"|translate}}</mat-slide-toggle>
+        <div class="averageDiv">
+            <div class="leftDiv">
+                <mat-slide-toggle [color]="slideToggleColor" [checked]="false"
+                    [disabled]="!redeemPercent||redeemPercent===null||redeemPercent===0" (change)="reset($event)"
+                    #redeemToThree>{{"Redeem to all coins"|translate}}</mat-slide-toggle>
+            </div>
+        </div>
+        <div class="butDiv">
+            <button *ngIf="boot.accounts.length>0" (click)="redeemCoin()" [disabled]="status===1"
+                [ngClass]="{'myBtn':status===0||status===2,'myBtn-disabled': status===1}">{{"Withdraw
+                Liquidity"|translate}}</button>
+            <button *ngIf="boot.accounts.length==0" (click)="boot.connectWallet()" class="myBtn">{{"Connect to a
+                Wallet"|translate}}</button>
         </div>
     </div>
-    <div class="butDiv">
-        <button *ngIf="boot.accounts.length>0" (click)="redeemCoin()" [disabled]="status===1"
-            [ngClass]="{'myBtn':status===0||status===2,'myBtn-disabled': status===1}">{{"Withdraw Liquidity"|translate}}</button>
-        <button *ngIf="boot.accounts.length==0" (click)="boot.connectWallet()" class="myBtn">{{"Connect to a
-            Wallet"|translate}}</button>
+    <!-- deposit lp -->
+    <div class="main" style="margin-top: 20px;">
+        <div class="LiquidityRatio">
+            <p>{{boot.liquiditySymbol}} {{boot.balance.lp.toFixed(4,1)}}</p>
+            <div class="enterDiv">
+                <div class="inputDiv">
+                    <input type="number" name="depositPercent" [ngModel]="depositPercent"
+                        (ngModelChange)="depositPercentChange($event)"
+                        placeholder="{{'Please enter a number'|translate}}">
+                    <span>%</span>
+                </div>
+            </div>
+        </div>
+        <div class="butDiv">
+            <button *ngIf="boot.accounts.length>0&&needApproveLP" [ngClass]="{'myBtn':loadStatus===0||loadStatus===2,'myBtn-disabled': loadStatus===1}" [disabled]="loadStatus===1" (click)="approveLP()">Approve
+                LP</button>
+            <button *ngIf="boot.accounts.length>0&&!needApproveLP" [ngClass]="{'myBtn':loadStatus===0||loadStatus===2,'myBtn-disabled': loadStatus===1}" [disabled]="loadStatus===1" (click)="depositLP()">Deposit
+                LP</button>
+            <button *ngIf="boot.accounts.length==0" (click)="boot.connectWallet()" class="myBtn">{{"Connect to a
+                Wallet"|translate}}</button>
+        </div>
+    </div>
+    <!-- withdraw LP -->
+    <div class="main" style="margin-top: 20px;">
+        <div class="LiquidityRatio">
+            <p>Staking {{boot.liquiditySymbol}} {{boot.balance.stakingLP.toFixed(4,1)}}</p>
+            <div class="enterDiv">
+                <div class="inputDiv">
+                    <input type="number" name="withdrawLPPercent" [ngModel]="withdrawLPPercent"
+                        (ngModelChange)="withdrawLPPercentChange($event)"
+                        placeholder="{{'Please enter a number'|translate}}">
+                    <span>%</span>
+                </div>
+            </div>
+        </div>
+        <div class="butDiv">
+            <button *ngIf="boot.accounts.length>0" [ngClass]="{'myBtn':loadStatus===0||loadStatus===2,'myBtn-disabled': loadStatus===1}" [disabled]="loadStatus===1" (click)="withdrawLP()">Withdraw LP</button>
+            <button *ngIf="boot.accounts.length==0" (click)="boot.connectWallet()" class="myBtn">{{"Connect to a
+                Wallet"|translate}}</button>
+        </div>
+        <div class="butDiv">
+            <button *ngIf="boot.accounts.length>0" [ngClass]="{'myBtn':loadStatus===0||loadStatus===2,'myBtn-disabled': loadStatus===1}" [disabled]="loadStatus===1" (click)="withdrawAllLP()">Withdraw All LP</button>
+            <button *ngIf="boot.accounts.length==0" (click)="boot.connectWallet()" class="myBtn">{{"Connect to a
+                Wallet"|translate}}</button>
+        </div>
+    </div>
+    <!-- get pending reward -->
+    <div class="main" style="margin-top: 20px;">
+        <div class="LiquidityRatio">
+            <p>Pending {{boot.tokenSymbol}} {{boot.balance.pendingToken.toFixed(4,1)}}</p>
+            <div class="enterDiv">
+            </div>
+        </div>
+        <div class="butDiv">
+            <button *ngIf="boot.accounts.length>0" [ngClass]="{'myBtn':loadStatus===0||loadStatus===2,'myBtn-disabled': loadStatus===1}" [disabled]="loadStatus===1" (click)="getPending()">Get Pending {{boot.tokenSymbol}}</button>
+            <button *ngIf="boot.accounts.length==0" (click)="boot.connectWallet()" class="myBtn">{{"Connect to a
+                Wallet"|translate}}</button>
+        </div>
     </div>
 </div>

@@ -23,4 +23,8 @@ export class RewardInfoComponent implements OnInit {
     volRewardPercent() {
         return this.boot.poolInfo.swapRewardRate.multipliedBy(100);
     }
+
+    tokenBalance() {
+        return this.boot.poolInfo.tokenBalance.multipliedBy(this.allocationPercent()).div(100);
+    }
 }

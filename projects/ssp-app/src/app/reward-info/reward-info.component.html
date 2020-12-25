@@ -38,7 +38,11 @@
         </div>
         <div class="sum">
             <div>{{boot.tokenSymbol}} Balance:</div>
-            <div>{{boot.poolInfo.tokenBalance.toFormat(4,1)}}</div>
+            <div>{{tokenBalance().toFormat(4,1)}}</div>
+        </div>
+        <div class="sum">
+            <div>{{boot.liquiditySymbol}} Balance:</div>
+            <div>{{boot.poolInfo.totalLPStaking.toFormat(4,1)}}</div>
         </div>
     </div>
 </div>

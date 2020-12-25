@@ -8,6 +8,9 @@ export enum ActionStatus {
     None, Transfering, TrasactionEnd
 }
 
+export enum LoadStatus {
+    None, Loading, Loaded
+}
 @Component({
     selector: 'app-redeemliquidity-comp',
     templateUrl: './redeemliquidity-comp.component.html',
@@ -17,11 +20,23 @@ export class RedeemliquidityCompComponent implements OnInit {
 
     amts: Array<number>;
 
-    redeemPrecent: number = 0;
+    redeemPercent: number = 0;
 
     redeemToIndex: string = '4';
 
+    depositPercent: number = 0;
+
+    depositLPAmt: BigNumber = new BigNumber(0);
+
+    needApproveLP: boolean = false;
+
+    withdrawLPPercent: number = 0;
+
+    withdrawLPAmt: BigNumber = new BigNumber(0);
+
     status: ActionStatus = ActionStatus.None;
+
+    loadStatus: LoadStatus = LoadStatus.None;
 
     @Output() loading: EventEmitter<any> = new EventEmitter();
     @Output() loaded: EventEmitter<any> = new EventEmitter();
@@ -35,7 +50,8 @@ export class RedeemliquidityCompComponent implements OnInit {
         this.amts = new Array();
         this.boot.coins.forEach((e, i, arr) => {
             this.amts.push(0);
-        })
+        });
+        this.updateLPApproveStatus();
     }
 
     ngOnInit(): void {
@@ -43,8 +59,8 @@ export class RedeemliquidityCompComponent implements OnInit {
 
     async redeemCoin() {
         await this.boot.loadData();
-        if (this.redeemPrecent && this.redeemPrecent !== 0) { // 输入要赎回流动性的数量（百分比）
-            let lps = this.boot.balance.lp.multipliedBy(this.redeemPrecent).dividedBy(100).toFixed(18, BigNumber.ROUND_UP);
+        if (this.redeemPercent && this.redeemPercent !== 0) { // 输入要赎回流动性的数量（百分比）
+            let lps = this.boot.balance.lp.multipliedBy(this.redeemPercent).dividedBy(100).toFixed(18, BigNumber.ROUND_UP);
             if (Number(this.redeemToIndex) >= 0 && Number(this.redeemToIndex) <= 2) { // 赎回成一种币
                 this.status = ActionStatus.Transfering;
                 this.loading.emit();
@@ -52,6 +68,7 @@ export class RedeemliquidityCompComponent implements OnInit {
                     this.status = ActionStatus.TrasactionEnd;
                     this.boot.loadData();
                     this.loaded.emit();
+                    this.redeemPercentChange(0);
                 });
             } else { // 赎回成3种币
                 this.status = ActionStatus.Transfering;
@@ -64,6 +81,7 @@ export class RedeemliquidityCompComponent implements OnInit {
                     this.status = ActionStatus.TrasactionEnd;
                     this.boot.loadData();
                     this.loaded.emit();
+                    this.redeemPercentChange(0);
                 });
             }
         } else {
@@ -78,18 +96,19 @@ export class RedeemliquidityCompComponent implements OnInit {
                 this.status = ActionStatus.TrasactionEnd;
                 this.boot.loadData();
                 this.loaded.emit();
+                this.redeemPercentChange(0);
             });
         }
     }
 
-    redeemPrecentChange(val) {
-        if (!this.redeemPrecent || this.redeemPrecent === 0) {
+    redeemPercentChange(val) {
+        if (!this.redeemPercent || this.redeemPercent === 0) {
             this.redeemToThree.checked = true;
         }
-        this.redeemPrecent = val;
-        if (this.redeemPrecent && this.redeemPrecent !== 0) {
+        this.redeemPercent = val;
+        if (this.redeemPercent && this.redeemPercent !== 0) {
             if (this.redeemToThree.checked) {
-                let lps = this.boot.balance.lp.multipliedBy(this.redeemPrecent).dividedBy(100);
+                let lps = this.boot.balance.lp.multipliedBy(this.redeemPercent).dividedBy(100);
                 this.amts.forEach((e, i, arr) => {
                     let amt = this.boot.poolInfo.coinsRealBalance[i].multipliedBy(lps).div(this.boot.poolInfo.totalSupply);
                     arr[i] = Number(amt.toFixed(9, BigNumber.ROUND_DOWN))
@@ -103,7 +122,7 @@ export class RedeemliquidityCompComponent implements OnInit {
     async redeemToIndexChange(val) {
         this.redeemToThree.checked = false;
         this.redeemToIndex = val;
-        let lps = this.boot.balance.lp.multipliedBy(this.redeemPrecent).dividedBy(100).toFixed(18, BigNumber.ROUND_DOWN);
+        let lps = this.boot.balance.lp.multipliedBy(this.redeemPercent).dividedBy(100).toFixed(18, BigNumber.ROUND_DOWN);
         let res = await this.boot.calcWithdrawOneCoin(lps, this.redeemToIndex);
         this.amts.forEach((e, i, arr) => {
             if (Number(this.redeemToIndex) === i) {
@@ -116,9 +135,86 @@ export class RedeemliquidityCompComponent implements OnInit {
 
     reset(val) {
         if (val.checked) {
-            this.redeemPrecentChange(this.redeemPrecent);
+            this.redeemPercentChange(this.redeemPercent);
             this.redeemToIndex = '-1';
         }
     }
 
+    updateLPApproveStatus() {
+        this.boot.allowanceLP().then(amt => {
+            if (this.depositLPAmt.comparedTo(amt) > 0) {
+                this.needApproveLP = true;
+            } else {
+                this.needApproveLP = false;
+            }
+        });
+    }
+
+    depositPercentChange(val) {
+        this.depositPercent = val;
+        if (this.depositPercent && this.depositPercent !== 0) {
+            this.depositLPAmt = this.boot.balance.lp.multipliedBy(this.depositPercent).dividedBy(100);
+        }
+        this.updateLPApproveStatus();
+    }
+
+    approveLP() {
+        this.loading.emit();
+        this.loadStatus = LoadStatus.Loading;
+        this.boot.approveLP(this.depositLPAmt.toFixed(18, BigNumber.ROUND_DOWN)).then(() => {
+            this.updateLPApproveStatus();
+            this.boot.loadData();
+            this.loaded.emit();
+            this.loadStatus = LoadStatus.Loaded;
+        });
+    }
+
+    depositLP() {
+        this.loading.emit();
+        this.loadStatus = LoadStatus.Loading;
+        this.boot.depositLP(this.depositLPAmt.toFixed(18, BigNumber.ROUND_DOWN)).then(() => {
+            this.boot.loadData();
+            this.loaded.emit();
+            this.loadStatus = LoadStatus.Loaded;
+            this.depositPercentChange(0);
+        });
+    }
+
+    withdrawLPPercentChange(val) {
+        this.withdrawLPPercent = val;
+        if (this.withdrawLPPercent && this.withdrawLPPercent !== 0) {
+            this.withdrawLPAmt = this.boot.balance.lp.multipliedBy(this.withdrawLPPercent).dividedBy(100);
+        }
+    }
+
+    withdrawLP() {
+        this.loading.emit();
+        this.loadStatus = LoadStatus.Loading;
+        this.boot.withdrawLP(this.withdrawLPAmt.toFixed(18, BigNumber.ROUND_DOWN)).then(() => {
+            this.boot.loadData();
+            this.loaded.emit();
+            this.loadStatus = LoadStatus.Loaded;
+            this.withdrawLPPercentChange(0);
+        });
+    }
+
+    withdrawAllLP() {
+        this.loading.emit();
+        this.loadStatus = LoadStatus.Loading;
+        this.boot.emergencyWithdraw().then(() => {
+            this.boot.loadData();
+            this.loaded.emit();
+            this.loadStatus = LoadStatus.Loaded;
+        });
+    }
+
+    getPending() {
+        this.loading.emit();
+        this.loadStatus = LoadStatus.Loading;
+        this.boot.withdrawLP("0").then(() => {
+            this.boot.loadData();
+            this.loaded.emit();
+            this.loadStatus = LoadStatus.Loaded;
+        });
+    }
 }

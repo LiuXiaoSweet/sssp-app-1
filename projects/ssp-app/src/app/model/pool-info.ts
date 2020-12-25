@@ -20,6 +20,7 @@ export class PoolInfo {
     tokenTotalSupply: BigNumber = new BigNumber(0);
     tokenAvailableSupply: BigNumber = new BigNumber(0);
     tokenBalance: BigNumber = new BigNumber(0);
+    totalLPStaking: BigNumber = new BigNumber(0);
 
     constructor(coinsLength: number) {
         this.coinsBalance = new Array(coinsLength);
