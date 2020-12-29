@@ -8,6 +8,9 @@ export class Balance {
     rewardDebt: BigNumber = new BigNumber(0);
     pendingToken: BigNumber = new BigNumber(0);
 
+    volReward: BigNumber = new BigNumber(0);
+    farmingReward: BigNumber = new BigNumber(0);
+
     constructor(coinsLength: number) {
         this.coinsBalance = new Array(coinsLength);
         this.coinsBalance.forEach(e => {

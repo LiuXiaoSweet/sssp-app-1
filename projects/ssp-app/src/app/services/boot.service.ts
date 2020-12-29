@@ -8,7 +8,10 @@ import { BigNumber } from 'bignumber.js';
 import { interval, Observable, Subject } from 'rxjs';
 import { Contract } from 'web3-eth-contract';
 import { environment } from '../../environments/environment';
-import { abi } from '../../abi';
+import BStableProxy from '../../abi/BStableProxy.json';
+import BEP20 from '../../abi/BEP20.json';
+import BStableToken from '../../abi/BStableToken.json';
+import BStablePool from '../../abi/BStablePool.json';
 import { AddlpSlippageConfirmComponent } from '../addlp-slippage-confirm/addlp-slippage-confirm.component';
 import { ApproveDlgComponent } from '../approve-dlg/approve-dlg.component';
 import { Balance } from '../model/balance';
@@ -102,7 +105,7 @@ export class BootService {
 
     private initContracts(): Promise<any> {
         let denominator = new BigNumber(10).exponentiatedBy(18);
-        this.proxyContract = new this.web3.eth.Contract(abi.proxyABI, this.chainConfig.contracts.proxy.address);
+        this.proxyContract = new this.web3.eth.Contract(BStableProxy.abi, this.chainConfig.contracts.proxy.address);
         this.proxyContract.methods.getTotalAllocPoint().call().then(points => {
             if (points) {
                 this.poolInfo.totalAllocPoint = new BigNumber(points).div(denominator);
@@ -112,7 +115,7 @@ export class BootService {
         });
         return this.proxyContract.methods.getTokenAddress().call().then(tokenAddress => {
             if (tokenAddress) {
-                this.tokenContract = new this.web3.eth.Contract(abi.tokenABI, tokenAddress);
+                this.tokenContract = new this.web3.eth.Contract(BStableToken.abi, tokenAddress);
                 this.tokenContract.methods.balanceOf(this.accounts[0]).call().then(balance => {
                     if (balance) {
                         this.balance.tokenBalance = new BigNumber(balance).div(denominator);
@@ -138,13 +141,13 @@ export class BootService {
                 if (res && res._coins) {
                     this.contracts.splice(0, this.contracts.length);
                     res._coins.forEach(e => {
-                        this.contracts.push(new this.web3.eth.Contract(abi.coinABI, e));
+                        this.contracts.push(new this.web3.eth.Contract(BEP20.abi, e));
                         this.contractsAddress.push(e);
                     });
                 }
                 if (res && res._poolAddress) {
                     this.poolAddress = res._poolAddress;
-                    this.poolContract = new this.web3.eth.Contract(abi.poolABI, res._poolAddress);
+                    this.poolContract = new this.web3.eth.Contract(BStablePool.abi, res._poolAddress);
                 }
                 if (res && res._allocPoint) {
                     this.poolInfo.allocPoint = new BigNumber(res._allocPoint).div(denominator);
@@ -400,6 +403,12 @@ export class BootService {
                     }
                     if (res && res._rewardDebt) {
                         this.balance.rewardDebt = new BigNumber(res._rewardDebt).div(denominator);
+                    }
+                    if (res && res._volReward) {
+                        this.balance.volReward = new BigNumber(res._volReward).div(denominator);
+                    }
+                    if (res && res._farmingReward) {
+                        this.balance.farmingReward = new BigNumber(res._farmingReward).div(denominator);
                     }
                 }).catch(e => {
                     console.log(e);

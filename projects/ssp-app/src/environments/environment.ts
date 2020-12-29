@@ -1,28 +1,16 @@
-// This file can be replaced during build by using the `fileReplacements` array.
-// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
-
 export const environment = {
-    production: false,
+    production: true,
     poolId: "p1",
     liquiditySymbol: "BSLP-01",
     tokenSymbol: "BST",
     virtualPriceDiff: 0.006,
-    coins: [{ symbol: 'DAI' }, { symbol: 'BUSD' }, { symbol: 'USDT' }],
+    coins: [{ symbol: 'bstDAI' }, { symbol: 'bstBUSD' }, { symbol: 'bstUSDT' }],
     chains: {
         56: {
             enabled: false,
-            name: 'BSC Main Net',
+            name: 'BSC Mainnet',
             rpc: 'https://bsc-dataseed.binance.org/',
             contracts: {
-                coins: [
-                    { symbol: 'DAI', address: '0xec5dcb5dbf4b114c9d0f65bccab49ec54f6a0867' },
-                    { symbol: 'BUSD', address: '0xed24fc36d5ee211ea25a80239fb8c4cfd80f12ee' },
-                    { symbol: 'USDT', address: '0x337610d27c682e347c9cd60bd4b3b107c9d34ddd' },
-                ],
-                Pool: {
-                    address: '0x936EaEB69174e9f67b07213890DF8E0c29A71c83',
-                }
             }
         },
         97: {
@@ -30,14 +18,21 @@ export const environment = {
             name: 'BSC Testnet',
             rpc: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
             contracts: {
-                coins: [
-                    { symbol: 'DAI', address: '0xec5dcb5dbf4b114c9d0f65bccab49ec54f6a0867' },
-                    { symbol: 'BUSD', address: '0xed24fc36d5ee211ea25a80239fb8c4cfd80f12ee' },
-                    { symbol: 'USDT', address: '0x337610d27c682e347c9cd60bd4b3b107c9d34ddd' },
-                ],
-                Pool: {
-                    address: '0x936EaEB69174e9f67b07213890DF8E0c29A71c83',
-                }
+                proxy: {
+                    address: "0xe6D92fed3b36188bD37b63C86419822Eec6e07B5"
+                },
+                pid: 0
+            }
+        },
+        1337: {
+            enabled: true,
+            name: 'DEV',
+            rpc: 'http://localhost:8545/',
+            contracts: {
+                proxy: {
+                    address: "0xFc50cC3eC8631c3BD61B834Fd8EfA4BA2B11A035"
+                },
+                pid: 0
             }
         },
         "Binance-Chain-Ganges": {
@@ -45,24 +40,11 @@ export const environment = {
             name: 'BSC Testnet',
             rpc: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
             contracts: {
-                coins: [
-                    { symbol: 'DAI', address: '0xec5dcb5dbf4b114c9d0f65bccab49ec54f6a0867' },
-                    { symbol: 'BUSD', address: '0xed24fc36d5ee211ea25a80239fb8c4cfd80f12ee' },
-                    { symbol: 'USDT', address: '0x337610d27c682e347c9cd60bd4b3b107c9d34ddd' },
-                ],
-                Pool: {
-                    address: '0x936EaEB69174e9f67b07213890DF8E0c29A71c83',
-                }
+                proxy: {
+                    address: "0xe6D92fed3b36188bD37b63C86419822Eec6e07B5"
+                },
+                pid: 0
             }
         }
     },
 };
-
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.

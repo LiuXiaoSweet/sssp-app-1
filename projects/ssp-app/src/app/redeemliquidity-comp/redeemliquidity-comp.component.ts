@@ -183,7 +183,7 @@ export class RedeemliquidityCompComponent implements OnInit {
     withdrawLPPercentChange(val) {
         this.withdrawLPPercent = val;
         if (this.withdrawLPPercent && this.withdrawLPPercent !== 0) {
-            this.withdrawLPAmt = this.boot.balance.lp.multipliedBy(this.withdrawLPPercent).dividedBy(100);
+            this.withdrawLPAmt = this.boot.balance.stakingLP.multipliedBy(this.withdrawLPPercent).dividedBy(100);
         }
     }
 
