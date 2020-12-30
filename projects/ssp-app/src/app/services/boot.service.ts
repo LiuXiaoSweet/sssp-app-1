@@ -331,6 +331,7 @@ export class BootService {
                 // @ts-ignore
                 this.wcWeb3 = new Web3_1_2(this.wcProvider);
                 this.web3 = this.wcWeb3;
+                localStorage.setItem("web3Type", "walletconnect");
                 this.init();
             }
         }).catch(e => {
@@ -349,6 +350,7 @@ export class BootService {
             // @ts-ignore
             this.metamaskWeb3 = new Web3_1_3(window.ethereum);
             this.web3 = this.metamaskWeb3;
+            localStorage.setItem("web3Type", "metamask");
             this.init();
         }
     }
@@ -360,6 +362,7 @@ export class BootService {
             // @ts-ignore
             this.binanceWeb3 = new Web3_1_3(window.BinanceChain);
             this.web3 = this.binanceWeb3;
+            localStorage.setItem("web3Type", "binance");
             this.init();
         }
     }
