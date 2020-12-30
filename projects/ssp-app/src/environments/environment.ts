@@ -19,7 +19,7 @@ export const environment = {
             rpc: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
             contracts: {
                 proxy: {
-                    address: "0xe6D92fed3b36188bD37b63C86419822Eec6e07B5"
+                    address: "0x77e0b8147fdd8d7f897523ED49394F686f5Ae1B9"
                 },
                 pid: 0
             }
@@ -30,7 +30,7 @@ export const environment = {
             rpc: 'http://localhost:8545/',
             contracts: {
                 proxy: {
-                    address: "0xFc50cC3eC8631c3BD61B834Fd8EfA4BA2B11A035"
+                    address: "0x186AB3933cE36f9C0a1b4843ddC0E9D992A52ed6"
                 },
                 pid: 0
             }
