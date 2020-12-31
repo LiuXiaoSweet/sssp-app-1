@@ -22,7 +22,7 @@
                 <ul class="tabDiv">
                     <li [ngClass]="{active: curTab==0}" ><a (click)="changeTab(0)">{{'Swap'|translate}}</a></li>
                     <li [ngClass]="{active: curTab==1}" ><a (click)="changeTab(1)">{{'Add Liquidity'|translate}}</a></li>
-                    <li [ngClass]="{active: curTab==2}" ><a (click)="changeTab(2)">{{'Manage Liquidity'|translate}}</a></li>
+                    <li [ngClass]="{active: curTab==2}" ><a [ngStyle]="{padding: lang.curLanguage.indexOf('en')===0?'10px 0':'10px 20px'}"(click)="changeTab(2)">{{'Manage Liquidity'|translate}}</a></li>
                 </ul>
                 <div class="SwapDiv">
                     <app-swap-comp [hidden]="curTab!=0" (loading)="header.onLoading()" (loaded)="header.onLoaded()">
