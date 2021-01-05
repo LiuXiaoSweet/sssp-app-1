@@ -30,7 +30,7 @@ export const environment = {
             rpc: 'http://localhost:8545/',
             contracts: {
                 proxy: {
-                    address: "0x186AB3933cE36f9C0a1b4843ddC0E9D992A52ed6"
+                    address: "0xEBa530b8cB9b76acc90E1Ae57E21CbD807913c42"
                 },
                 pid: 0
             }
