@@ -1,8 +1,11 @@
 import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import BigNumber from 'bignumber.js';
 import { BootService } from '../services/boot.service';
+import { ChooseWalletDlgComponent } from '../choose-wallet-dlg/choose-wallet-dlg.component';
+import { IntallWalletDlgComponent } from '../intall-wallet-dlg/intall-wallet-dlg.component';
 
 export enum ActionStatus {
     None, Transfering, TrasactionEnd
@@ -46,7 +49,7 @@ export class RedeemliquidityCompComponent implements OnInit {
     @ViewChild('redeemToThree')
     redeemToThree: MatSlideToggle;
 
-    constructor(public boot: BootService) {
+    constructor(public boot: BootService, private dialog: MatDialog) {
         this.amts = new Array();
         this.boot.coins.forEach((e, i, arr) => {
             this.amts.push(0);
@@ -140,6 +143,18 @@ export class RedeemliquidityCompComponent implements OnInit {
         }
     }
 
+    public async connectWallet() {
+        if (!this.boot.isMetaMaskInstalled() && !this.boot.isBinanceInstalled()) {
+            this.dialog.open(IntallWalletDlgComponent, { width: '30em' });
+            return;
+        } else {
+            this.chooseWallet();
+        }
+    }
+    chooseWallet() {
+        this.dialog.open(ChooseWalletDlgComponent, { width: '30em' });
+    }
+
     updateLPApproveStatus() {
         this.boot.allowanceLP().then(amt => {
             if (this.depositLPAmt.comparedTo(amt) > 0) {
@@ -154,6 +169,7 @@ export class RedeemliquidityCompComponent implements OnInit {
         this.depositPercent = val;
         if (this.depositPercent && this.depositPercent !== 0) {
             this.depositLPAmt = this.boot.balance.lp.multipliedBy(this.depositPercent).dividedBy(100);
+            this.depositLPAmt=new BigNumber(this.depositLPAmt.toFixed(9,BigNumber.ROUND_DOWN));
         }
         this.updateLPApproveStatus();
     }
@@ -161,7 +177,7 @@ export class RedeemliquidityCompComponent implements OnInit {
     approveLP() {
         this.loading.emit();
         this.loadStatus = LoadStatus.Loading;
-        this.boot.approveLP(this.depositLPAmt.toFixed(18, BigNumber.ROUND_DOWN)).then(() => {
+        this.boot.approveLP(this.depositLPAmt.toFixed(9, BigNumber.ROUND_DOWN)).then(() => {
             this.updateLPApproveStatus();
             this.boot.loadData();
             this.loaded.emit();
