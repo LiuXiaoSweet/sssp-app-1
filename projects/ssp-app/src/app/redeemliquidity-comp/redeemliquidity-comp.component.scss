@@ -220,175 +220,176 @@
     color: #fff;
     font-size: 16px;
     display: block;
+
 }
 
-.withdrawLiqui-pc .main{
-    .depositDiv,.withdrawdiv,.rewardDiv {
-        width: 90%;
-        margin: 0px auto;
-        overflow: hidden;
-        margin-bottom: 10px;
-        // background: #2480FF;
-        // border-radius: 16px;
-        // color: #fff;
-        // font-size: 16px;
-        // display: block;
-        .textDiv{
-            margin: 12px 0 5px;
+.withdrawLiqui-pc {
+    /* display: none; */
+    /*隐藏  取出流动性*/
+    background-color: #ffffff;
+    height: auto;
+    width: 100%;
+    position: relative;
+    // z-index: 6000;
+    background-size: 100% 100%;
+    .main{
+        width: 100%;
+        // height: 356px;
+        border-radius: 12px;
+        border: 1px solid #f0f1f1;
+        padding: 5px 0;
+        .tittle {
+            width: 91%;
+            height: 23px;
+            margin: 12px auto;
+            div {
+                float: left;
+                width: 7px;
+                height: 23px;
+                background: #2480FF;
+                border-radius: 38px;
+            }
+            p {
+                float: left;
+                font-size: 18px;
+                font-family: PingFangSC-Medium, PingFang SC;
+                font-weight: 500;
+                color: #000000;
+                line-height: 30px;
+                margin-left: 10px;
+            }            
+        }
+        .depositDiv,.withdrawdiv,.rewardDiv {
+            width: 90%;
+            margin: 0px auto;
             overflow: hidden;
-            font-size: 14px;
-            .text_span{
-                float: left;               
-                font-family: "PingFangSC-Medium, PingFang SC";
-                font-weight: 500;
-                color: #000000;
-            }
-            .val_span{
-                float: right;
-                font-family: "DINAlternate-Bold, DINAlternate";
-                font-weight: bold;
-                color: #000000;
-            }
-        }
-        .inputDiv{
-           div{
-            width: 54%;
-            height: 42px;
-            position: relative;
-            float: left;
-                input{
-                    width: 100%;
-                    float: left;
-                    height: 42px;
-                    background: #FAFAFA;
-                    border-radius: 10px;
-                    border: 1px solid #f0f1f1;
-                    padding-left: 12px;
-                }
-                .allBtn{
-                    width: 1px;
-                    height: 30px;               
-                    font-weight: 500;
-                    color: #2480FF;
-                    line-height: 30px;
-                    position: absolute;
-                    top: 6px;
-                    right: 0px;
-                    width: 50px;
-                    text-align: center;
-                    display: inline-block;
-                    border-left:solid 1px #f0f1f1;
-                    cursor: pointer;
-                }
-                .percentage{                
-                    font-family: "PingFangSC-Medium, PingFang SC";
-                    font-weight: 500;
-                    color: #141415;
-                    width: 1px;
-                    height: 30px;               
-                    line-height: 30px;
-                    position: absolute;
-                    top: 6px;
-                    right: 0px;
-                    width: 50px;
-                    text-align: center;
-                    display: inline-block;
-
-                    cursor: pointer;
-                }
-           }
-            button{ 
-                float: right;
-                width: 39%;  
-                height: 42px;      
-                border-radius: 10px;
-                border: 1px solid #2480FF;
-                font-weight: 500;
-                color: #2480FF;
-                line-height: 42px;
-                background: #ffffff;
-                font-size: 13px;
-                padding: 0;
-            }
-        }  
-    }
-    .withdrawdiv {
-        .inputDiv{
-           div{
-               width: 54%;
-               height: 42px;
-               position: relative;
-               float: left;
-               input{
-                   width: 100%;
-               }
-                .allBtn{
-                    width: 1px;
-                    height: 30px;               
-                    font-weight: 500;
-                    color: #2480FF;
-                    line-height: 30px;
-                    position: absolute;
-                    top: 6px;
-                    right: 0px;
-                    width: 50px;
-                    text-align: center;
-                    display: inline-block;
-                    border-left:solid 1px #f0f1f1;
-                    cursor: pointer;
-                }
-                .percentage{                
-                    font-family: "PingFangSC-Medium, PingFang SC";
-                    font-weight: 500;
-                    color: #141415;
-                    width: 1px;
-                    height: 30px;               
-                    line-height: 30px;
-                    position: absolute;
-                    top: 6px;
-                    right: 0px;
-                    width: 50px;
-                    text-align: center;
-                    display: inline-block;
-
-                    cursor: pointer;
-                }
-           }
-        }
-    }
-    .rewardDiv{
-        margin-top: 22px;
-        margin-bottom: 0px;
-        padding: 15px 0px;
-        border-top: solid 1px #f0f1f1;
-        .textDiv{
-            float: left;
-            width: 50%;
-            .val_span{                
-                font-weight: bold;
-                color: #000000;
-                line-height: 28px;
+            margin-bottom: 10px;
+            // background: #2480FF;
+            // border-radius: 16px;
+            // color: #fff;
+            // font-size: 16px;
+            // display: block;
+            .textDiv{
+                margin: 12px 0 5px;
+                overflow: hidden;
                 font-size: 14px;
-                float: left;
+                .text_span{
+                    float: left;               
+                    font-family: "PingFangSC-Medium, PingFang SC";
+                    font-weight: 500;
+                    color: #000000;
+                }
+                .val_span{
+                    float: right;
+                    font-family: "DINAlternate-Bold, DINAlternate";
+                    font-weight: bold;
+                    color: #000000;
+                }
             }
-            .text_span{  
-                margin-left: 10px;           
-                font-weight: 500;
-                color: #000000;
-                line-height: 28px;
-                font-size: 12px;
-                float: left;
-            }
-
-        }
-        .btnDiv{
-            width: 44%;
-            float: right;
-            button{
+            .inputDiv{
+               div{
+                width: 50%;
                 height: 42px;
-                width: 100%;
-                border-radius: 10px;
+                position: relative;
+                float: left;
+                    input{
+                        width: 100%;
+                        float: left;
+                        height: 42px;
+                        background: #FAFAFA;
+                        border-radius: 10px;
+                        border: 1px solid #f0f1f1;
+                        padding-left: 12px;
+                    }
+                    .allBtn{
+                        width: 1px;
+                        height: 30px;               
+                        font-weight: 500;
+                        color: #2480FF;
+                        line-height: 30px;
+                        position: absolute;
+                        top: 6px;
+                        right: 0px;
+                        width: 50px;
+                        text-align: center;
+                        display: inline-block;
+                        border-left:solid 1px #f0f1f1;
+                        cursor: pointer;
+                    }
+                    .percentage{                
+                        font-family: "PingFangSC-Medium, PingFang SC";
+                        font-weight: 500;
+                        color: #141415;
+                        width: 1px;
+                        height: 30px;               
+                        line-height: 30px;
+                        position: absolute;
+                        top: 6px;
+                        right: 0px;
+                        width: 50px;
+                        text-align: center;
+                        display: inline-block;
+                        cursor: pointer;
+                    }
+               }
+                button{ 
+                    float: right;
+                    width: 45%;  
+                    height: 42px;      
+                    border-radius: 10px;
+                    border: 1px solid #2480FF;
+                    font-weight: 500;
+                    color: #2480FF;
+                    line-height: 42px;
+                    background: #ffffff;
+                    font-size: 13px;
+                    padding: 0 8px;
+                }
+            }  
+        }
+        .withdrawdiv {
+            .inputDiv{
+               div{
+               }
             }
         }
-    }
+        .rewardDiv{
+            margin-top: 22px;
+            margin-bottom: 0px;
+            padding: 15px 0px;
+            border-top: solid 1px #f0f1f1;
+            .textDiv{
+                float: left;
+                width: 50%;
+                .val_span{                
+                    font-weight: bold;
+                    color: #000000;
+                    line-height: 28px;
+                    font-size: 14px;
+                    float: left;
+                }
+                .text_span{  
+                    margin-left: 10px;           
+                    font-weight: 500;
+                    color: #000000;
+                    line-height: 28px;
+                    font-size: 12px;
+                    float: left;
+                }
+    
+            }
+            .btnDiv{
+                width: 44%;
+                float: right;
+                button{
+                    height: 42px;
+                    width: 100%;
+                    border-radius: 10px;
+                }
+            }
+        }
+    } 
 } 
+
+
+
