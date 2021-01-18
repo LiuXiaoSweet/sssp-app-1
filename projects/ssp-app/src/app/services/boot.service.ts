@@ -484,7 +484,7 @@ export class BootService {
         amts.forEach((e, i, arr) => {
             amtsStr.push(this.web3.utils.toWei(String(e), 'ether'));
         });
-        let data = this.proxyContract.methods.add_liquidity(this.chainConfig.contracts.pid, amtsStr, 0).encodeABI();
+        let data = this.poolContract.methods.add_liquidity(this.chainConfig.contracts.pid, amtsStr, 0).encodeABI();
         let txdata = { from: this.accounts[0], to: this.chainConfig.contracts.proxy.address, data: data };
         return this.getTXData(txdata).then(data => {
             return this.web3.eth.sendTransaction(data).catch(e => {
