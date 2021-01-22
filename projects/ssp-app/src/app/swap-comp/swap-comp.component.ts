@@ -86,7 +86,7 @@ export class SwapCompComponent implements OnInit {
         if (this.amt) {
             this.loadStatus = LoadStatus.Loading;
             this.loading.emit();
-            this.boot.approve(Number(this.left), this.amt).then(() => {
+            this.boot.approve(Number(this.left), this.amt, this.boot.chainConfig.contracts.proxy.address).then(() => {
                 this.loaded.emit();
                 this.updateApproveStatus();
                 this.loadStatus = LoadStatus.Loaded;
@@ -114,13 +114,13 @@ export class SwapCompComponent implements OnInit {
             //     this.loaded.emit();
             //     return;
             // } else {
-                this.boot.exchange(Number(this.left), Number(this.right), this.amt, this.minAmt ? this.minAmt : '0').then(res => {
-                    console.log(res);
-                    this.boot.loadData();
-                    this.loaded.emit();
-                    this.loadStatus = LoadStatus.Loaded;
-                    this.updateApproveStatus();
-                });
+            this.boot.exchange(Number(this.left), Number(this.right), this.amt, this.minAmt ? this.minAmt : '0').then(res => {
+                console.log(res);
+                this.boot.loadData();
+                this.loaded.emit();
+                this.loadStatus = LoadStatus.Loaded;
+                this.updateApproveStatus();
+            });
             // }
         }
     }
@@ -156,7 +156,7 @@ export class SwapCompComponent implements OnInit {
 
     updateApproveStatus() {
         if (!new BigNumber(this.left).isNaN() && !new BigNumber(this.amt).isNaN() && this.boot.accounts && this.boot.accounts.length > 0) {
-            this.boot.allowance(this.left).then(amt => {
+            this.boot.allowance(this.left, this.boot.chainConfig.contracts.proxy.address).then(amt => {
                 if (amt.comparedTo(new BigNumber(this.amt)) >= 0) {
                     this.approveStatus = ApproveStatus.Approved;
                 } else {
