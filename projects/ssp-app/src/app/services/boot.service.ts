@@ -484,8 +484,8 @@ export class BootService {
         amts.forEach((e, i, arr) => {
             amtsStr.push(this.web3.utils.toWei(String(e), 'ether'));
         });
-        let data = this.proxyContract.methods.add_liquidity(this.chainConfig.contracts.pid, amtsStr, 0).encodeABI();
-        let txdata = { from: this.accounts[0], to: this.chainConfig.contracts.proxy.address, data: data };
+        let data = this.poolContract.methods.add_liquidity(amtsStr, 0).encodeABI();
+        let txdata = { from: this.accounts[0], to: this.poolAddress, data: data };
         return this.getTXData(txdata).then(data => {
             return this.web3.eth.sendTransaction(data).catch(e => {
                 console.log(e);
@@ -496,8 +496,8 @@ export class BootService {
         });
     }
 
-    public async approve(i: number, amt: string): Promise<any> {
-        if (this.proxyContract) {
+    public async approve(i: number, amt: string, address: string): Promise<any> {
+        if (this.proxyContract || this.poolContract) {
             let dialogRef = this.dialog.open(ApproveDlgComponent, { data: { amt: amt, symbol: this.coins[i].symbol }, height: '20em', width: '32em' });
             return dialogRef.afterClosed().toPromise().then(async res => {
                 let amt;
@@ -512,7 +512,7 @@ export class BootService {
                     });
                 }
                 console.log(amt);
-                let data = this.contracts[i].methods.approve(this.chainConfig.contracts.proxy.address, amt).encodeABI();
+                let data = this.contracts[i].methods.approve(address, amt).encodeABI();
                 try {
                     return await this.web3.eth.sendTransaction({ from: this.accounts[0], to: this.contractsAddress[i], data: data });
                 } catch (e) {
@@ -526,7 +526,7 @@ export class BootService {
         }
     }
 
-    public async approveLP(amt: string): Promise<any> {
+    public async approveLP(amt: string, address: string): Promise<any> {
         if (this.proxyContract) {
             let dialogRef = this.dialog.open(ApproveDlgComponent, { data: { amt: amt, symbol: this.liquiditySymbol }, height: '20em', width: '32em' });
             return dialogRef.afterClosed().toPromise().then(async res => {
@@ -542,7 +542,7 @@ export class BootService {
                     });
                 }
                 console.log(amt);
-                let data = this.poolContract.methods.approve(this.chainConfig.contracts.proxy.address, amt).encodeABI();
+                let data = this.poolContract.methods.approve(address, amt).encodeABI();
                 try {
                     return await this.web3.eth.sendTransaction({ from: this.accounts[0], to: this.poolAddress, data: data });
                 } catch (e) {
@@ -707,10 +707,10 @@ export class BootService {
         }
     }
 
-    public async allowance(i): Promise<BigNumber> {
+    public async allowance(i, address: string): Promise<BigNumber> {
         if (this.chainConfig && this.contracts && this.contracts.length > 0 && this.accounts && this.accounts.length > 0) {
             let decimals = await this.contracts[i].methods.decimals().call({ from: this.accounts[0] });
-            return this.contracts[i].methods.allowance(this.accounts[0], this.chainConfig.contracts.proxy.address).call().then((res) => {
+            return this.contracts[i].methods.allowance(this.accounts[0], address).call().then((res) => {
                 return new BigNumber(res).div(new BigNumber(10).exponentiatedBy(decimals));
             });
         } else {
@@ -721,10 +721,10 @@ export class BootService {
 
     }
 
-    public async allowanceLP(): Promise<BigNumber> {
+    public async allowanceLP(address: string): Promise<BigNumber> {
         if (this.chainConfig && this.contracts && this.contracts.length > 0 && this.accounts && this.accounts.length > 0) {
             let decimals = await this.poolContract.methods.decimals().call({ from: this.accounts[0] });
-            return this.poolContract.methods.allowance(this.accounts[0], this.chainConfig.contracts.proxy.address).call().then((res) => {
+            return this.poolContract.methods.allowance(this.accounts[0], address).call().then((res) => {
                 return new BigNumber(res).div(new BigNumber(10).exponentiatedBy(decimals));
             });
         } else {

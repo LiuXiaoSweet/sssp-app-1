@@ -19,7 +19,7 @@ export const environment = {
             rpc: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
             contracts: {
                 proxy: {
-                    address: "0x77e0b8147fdd8d7f897523ED49394F686f5Ae1B9"
+                    address: "0x87Cbc493236DbB05132D5406dFCb039cF0E69bD7"
                 },
                 pid: 1
             }

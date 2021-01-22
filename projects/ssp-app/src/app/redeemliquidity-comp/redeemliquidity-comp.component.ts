@@ -54,7 +54,9 @@ export class RedeemliquidityCompComponent implements OnInit {
         this.boot.coins.forEach((e, i, arr) => {
             this.amts.push(0);
         });
-        this.updateLPApproveStatus();
+        this.boot.walletReady.subscribe(() => {
+            this.updateLPApproveStatus();
+        });
     }
 
     ngOnInit(): void {
@@ -156,7 +158,7 @@ export class RedeemliquidityCompComponent implements OnInit {
     }
 
     updateLPApproveStatus() {
-        this.boot.allowanceLP().then(amt => {
+        this.boot.allowanceLP(this.boot.chainConfig.contracts.proxy.address).then(amt => {
             if (this.depositLPAmt.comparedTo(amt) > 0) {
                 this.needApproveLP = true;
             } else {
@@ -169,7 +171,7 @@ export class RedeemliquidityCompComponent implements OnInit {
         this.depositPercent = val;
         if (this.depositPercent && this.depositPercent !== 0) {
             this.depositLPAmt = this.boot.balance.lp.multipliedBy(this.depositPercent).dividedBy(100);
-            this.depositLPAmt=new BigNumber(this.depositLPAmt.toFixed(9,BigNumber.ROUND_DOWN));
+            this.depositLPAmt = new BigNumber(this.depositLPAmt.toFixed(9, BigNumber.ROUND_DOWN));
         }
         this.updateLPApproveStatus();
     }
@@ -177,7 +179,7 @@ export class RedeemliquidityCompComponent implements OnInit {
     approveLP() {
         this.loading.emit();
         this.loadStatus = LoadStatus.Loading;
-        this.boot.approveLP(this.depositLPAmt.toFixed(9, BigNumber.ROUND_DOWN)).then(() => {
+        this.boot.approveLP(this.depositLPAmt.toFixed(9, BigNumber.ROUND_DOWN), this.boot.chainConfig.contracts.proxy.address).then(() => {
             this.updateLPApproveStatus();
             this.boot.loadData();
             this.loaded.emit();

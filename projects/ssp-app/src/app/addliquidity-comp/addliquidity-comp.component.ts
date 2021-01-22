@@ -38,7 +38,6 @@ export class AddliquidityCompComponent implements OnInit {
             this.amts.push(0);
             this.approveStatus.push(ApproveStatus.None);
         }
-        this.updateApproveStatus();
         this.boot.walletReady.subscribe(res => {
             this.updateApproveStatus();
         });
@@ -62,7 +61,7 @@ export class AddliquidityCompComponent implements OnInit {
     updateApproveStatus() {
         for (let i = 0; i < this.boot.coins.length; i++) {
             if (this.boot.accounts && this.boot.accounts.length > 0) {
-                this.boot.allowance(i).then(amt => {
+                this.boot.allowance(i, this.boot.poolAddress).then(amt => {
                     if (amt.comparedTo(new BigNumber(this.amts[i])) >= 0) {
                         this.approveStatus[i] = ApproveStatus.Approved;
                     } else {
@@ -75,7 +74,7 @@ export class AddliquidityCompComponent implements OnInit {
     approve(i: number) {
         this.loadStatus = LoadStatus.Loading;
         this.loading.emit();
-        this.boot.approve(i, String(this.amts[i] ? this.amts[i] : 0)).then(r => {
+        this.boot.approve(i, String(this.amts[i] ? this.amts[i] : 0), this.boot.poolAddress).then(r => {
             this.updateApproveStatus();
             this.loadStatus = LoadStatus.Loaded;
             this.loaded.emit();
