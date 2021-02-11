@@ -3,11 +3,19 @@
         margin: 0 auto;
         width: 400px;
         height: 257px;
+        img{
+            width: 100%;
+        }
     }
 }
 @media screen and (min-width: 768px) {
     .hide {
         display: none;
+    }
+
+    .menu_img {
+        margin-right: 20px!important;
+        width: 25px!important;
     }
 
     #maxDiv {
